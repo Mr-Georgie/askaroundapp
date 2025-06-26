@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   name: string;
+  email: string;
   avatarUrl: string;
 }
 
@@ -61,3 +62,11 @@ export interface AppNotification {
   actor: User;
   timestamp: Date;
 }
+
+export interface AdminStats {
+    userCount: number;
+    questionCount: number;
+    sageUserCount: number;
+}
+
+export type AdminSearchResult = (Question & { type: 'question' }) | (Answer & { type: 'answer' });
