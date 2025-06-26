@@ -4,6 +4,11 @@ export interface User {
   avatarUrl: string;
 }
 
+export interface Keyword {
+  id: string;
+  count: number;
+}
+
 export interface Answer {
   id: string;
   questionId: string;
@@ -12,6 +17,8 @@ export interface Answer {
   votes: number;
   timestamp: Date;
   photoUrl?: string;
+  status: "active" | "deleted";
+  isFlagged: boolean;
 }
 
 export interface Question {
@@ -24,6 +31,9 @@ export interface Question {
   categoryEmoji: string;
   timestamp: Date;
   answers: Answer[];
+  keywords: string[];
+  status: "active" | "deleted";
+  isFlagged: boolean;
 }
 
 export interface SageConversation {

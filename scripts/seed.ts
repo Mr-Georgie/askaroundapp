@@ -10,13 +10,21 @@ import serviceAccount from '../serviceAccountKey.json' with { type: 'json' };
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as ServiceAccount),
-  // You may need to add your databaseURL if it's not in your service account file
-  // databaseURL: 'https://[YOUR_PROJECT_ID].firebaseio.com',
 });
 
 const db = admin.firestore();
 
-// --- SAMPLE DATA ---
+const STOP_WORDS = new Set(['a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with', 'the', 'i', 'your', 'you', 'can', 'find', 'my', 'any', 'just', 'some']);
+
+const extractKeywords = (text: string): string[] => {
+    const words = text
+        .toLowerCase()
+        .replace(/[^\w\s#]/g, '') // Allow '#' for existing tags
+        .split(/\s+/)
+        .filter(word => word.length > 2 && !STOP_WORDS.has(word));
+    return [...new Set(words)]; // Return unique keywords
+}
+
 const users = [
   {
     id: 'seed_user_alice',
@@ -102,34 +110,37 @@ const questions = [
 const seedDatabase = async () => {
   console.log('Starting to seed database...');
 
-  // --- Clear existing seeded data (optional, but recommended for clean runs) ---
+  // --- Clear existing seeded data ---
   console.log('Clearing existing seeded data...');
-  const existingQuestions = await db.collection('questions')
-  .where('user.id', 'in', ['seed_user_alice', 'seed_user_bob', 'seed_user_charlie', 'seed_user_diana'])
-  .get();
-  
-  if (!existingQuestions.empty) {
-    const batch = db.batch();
-    existingQuestions.docs.forEach(doc => {
-      batch.delete(doc.ref);
-    });
-    await batch.commit();
-    console.log(`Deleted ${existingQuestions.size} old questions.`);
+  const collectionsToClear = ['questions', 'answers', 'users', 'keywords'];
+  for (const collectionName of collectionsToClear) {
+
+    const snapshot = await db.collection(collectionName)
+    .where('user.id', 'in', ['seed_user_alice', 'seed_user_bob', 'seed_user_charlie', 'seed_user_diana'])
+    .get();
+
+      if (!snapshot.empty) {
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+        console.log(`Deleted ${snapshot.size} old documents from ${collectionName}.`);
+      }
   }
 
   // Seed Users
   const userBatch = db.batch();
   for (const user of users) {
     const userRef = db.collection('users').doc(user.id);
-    // Use set with merge to avoid overwriting real user data if IDs ever conflict
     userBatch.set(userRef, { name: user.name, avatarUrl: user.avatarUrl, id: user.id }, { merge: true });
   }
   await userBatch.commit();
   console.log(`Seeded ${users.length} users.`);
 
+  // Seed Questions, Answers, and Keywords
+  const keywordBatch = db.batch();
 
-  // Seed Questions and Answers
   for (const q of questions) {
+    const keywords = extractKeywords(q.text);
     const questionData = {
       text: q.text,
       categoryEmoji: q.categoryEmoji,
@@ -142,10 +153,19 @@ const seedDatabase = async () => {
       answersCount: q.answers.length,
       distance: `${(Math.random() * 5).toFixed(1)}km away`,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      keywords: keywords,
+      status: 'active',
+      isFlagged: false,
     };
 
     const questionRef = await db.collection('questions').add(questionData);
     console.log(`Added question: "${q.text}"`);
+
+    // Increment keyword counts
+    for (const keyword of keywords) {
+        const keywordRef = db.collection('keywords').doc(keyword);
+        keywordBatch.set(keywordRef, { count: admin.firestore.FieldValue.increment(1) }, { merge: true });
+    }
 
     if (q.answers.length > 0) {
       const answerBatch = db.batch();
@@ -161,12 +181,18 @@ const seedDatabase = async () => {
           votes: Math.floor(Math.random() * 20),
           timestamp: admin.firestore.FieldValue.serverTimestamp(),
           questionId: questionRef.id,
+          status: 'active',
+          isFlagged: false,
         });
       }
       await answerBatch.commit();
       console.log(`Added ${q.answers.length} answers.`);
     }
   }
+
+  await keywordBatch.commit();
+  console.log("Updated keyword counts.");
+
 
   console.log('--------------------');
   console.log('Seeding finished.');
@@ -175,7 +201,6 @@ const seedDatabase = async () => {
 
 seedDatabase()
   .then(() => {
-    // exit process
     process.exit(0);
   })
   .catch((error) => {
