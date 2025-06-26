@@ -7,11 +7,12 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, MapPin, User } from "lucide-react";
+import { MessageSquare, MapPin, User, Info } from "lucide-react";
 import VoteButtons from "./VoteButtons";
 import type { Question } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 import TimeAgo from "./TimeAgo";
+import { Badge } from "./ui/badge";
 
 type QuestionCardProps = {
   question: Question;
@@ -32,7 +33,13 @@ export default function QuestionCard({ question }: QuestionCardProps) {
             <p className="font-semibold text-card-foreground">
               {question.text}
             </p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+            {question.isFlagged && (
+              <Badge variant="destructive" className="mt-2 text-xs font-normal">
+                <Info className="mr-1 h-3 w-3" />
+                This content is under review.
+              </Badge>
+            )}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
               <Avatar className="h-5 w-5">
                 <AvatarFallback>{question.user.name.charAt(0)}</AvatarFallback>
               </Avatar>

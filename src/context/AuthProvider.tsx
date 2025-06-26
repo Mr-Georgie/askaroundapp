@@ -1,22 +1,19 @@
-"use client";
+'use client';
 
-import { auth, db } from "@/lib/firebase";
-import type { User } from "@/lib/types";
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
-import {
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  query,
-  where,
-  onSnapshot,
-  limit,
-} from "firebase/firestore";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth, db } from '@/lib/firebase';
+import type { User } from '@/lib/types';
+import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc, setDoc, collection, query, where, onSnapshot, limit } from 'firebase/firestore';
+import React,
+{
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface AuthContextType {
-  user: User | null;
+  user: (User & { email?: string | null }) | null;
   firebaseUser: FirebaseUser | null;
   loading: boolean;
   hasUnreadNotifications: boolean;
@@ -31,49 +28,52 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<(User & { email?: string | null }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useEffect(() => {
     let unsubscribeNotifications: () => void = () => {};
 
-    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (fbUser) => {
       setLoading(true);
-      setFirebaseUser(user);
+      setFirebaseUser(fbUser);
 
       // Clean up previous notification listener
       unsubscribeNotifications();
 
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
+      if (fbUser) {
+        const userRef = doc(db, 'users', fbUser.uid);
         const docSnap = await getDoc(userRef);
+        let appUser: User & { email?: string | null };
+
         if (docSnap.exists()) {
-          setUser(docSnap.data() as User);
+          appUser = docSnap.data() as User;
         } else {
           // Create a new user profile in Firestore if it doesn't exist
           const newUserProfile: User = {
-            id: user.uid,
-            name: user.displayName || "Anonymous Neighbor",
-            avatarUrl:
-              user.photoURL ||
-              `https://placehold.co/100x100/E0F8F8/000000?text=${
-                user.displayName?.charAt(0) || "A"
-              }`,
+            id: fbUser.uid,
+            name: fbUser.displayName || 'Anonymous Neighbor',
+            avatarUrl: fbUser.photoURL || `https://placehold.co/100x100/E0F8F8/000000?text=${fbUser.displayName?.charAt(0) || 'A'}`,
+            email: fbUser.email ?? "",
           };
           await setDoc(userRef, newUserProfile);
-          setUser(newUserProfile);
+          appUser = newUserProfile;
         }
-
+        
+        appUser.email = fbUser.email ?? "";
+        setUser(appUser);
+        
         // Set up new notification listener
         const unreadNotifsQuery = query(
-          collection(db, `users/${user.uid}/notifications`),
-          where("read", "==", false),
+          collection(db, `users/${fbUser.uid}/notifications`),
+          where('read', '==', false),
           limit(1)
         );
         unsubscribeNotifications = onSnapshot(unreadNotifsQuery, (snapshot) => {
           setHasUnreadNotifications(!snapshot.empty);
         });
+
       } else {
         setUser(null);
         setHasUnreadNotifications(false);
@@ -88,9 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{ user, firebaseUser, loading, hasUnreadNotifications }}
-    >
+    <AuthContext.Provider value={{ user, firebaseUser, loading, hasUnreadNotifications }}>
       {!loading && children}
     </AuthContext.Provider>
   );
