@@ -1,5 +1,6 @@
 "use client";
 
+import TimeAgo from "@/components/TimeAgo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -93,10 +94,7 @@ export default function NotificationsPage() {
                           answered your question: "{notification.questionText}"
                         </p>
                         <p className="text-xs text-muted-foreground mt-1 font-normal">
-                          {formatDistanceToNow(
-                            new Date(notification.timestamp),
-                            { addSuffix: true }
-                          )}
+                          <TimeAgo timestamp={notification.timestamp} />
                         </p>
                       </div>
                     </div>

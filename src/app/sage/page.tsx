@@ -11,6 +11,7 @@ import { AskSageDialog } from "@/components/AskSageDialog";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import TimeAgo from "@/components/TimeAgo";
 
 export default function SagePage() {
   const { user } = useAuth();
@@ -92,11 +93,7 @@ export default function SagePage() {
                         {convo.title}
                       </p>
                       <p className="text-xs text-muted-foreground shrink-0">
-                        {convo.timestamp
-                          ? formatDistanceToNow(new Date(convo.timestamp), {
-                              addSuffix: true,
-                            })
-                          : ""}
+                        {convo.timestamp ? <TimeAgo timestamp={convo.timestamp} /> : ''}
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground truncate mt-1">

@@ -13,6 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import AnswerForm from "./AnswerForm";
+import TimeAgo from "@/components/TimeAgo";
 
 export default async function QuestionPage({
   params,
@@ -29,6 +30,8 @@ export default async function QuestionPage({
     addSuffix: true,
   });
 
+  const firstName = question.user.name.split(" ")[0];
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <Card className="animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
@@ -40,15 +43,11 @@ export default async function QuestionPage({
             </h1>
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
               <Avatar className="h-6 w-6">
-                <AvatarImage
-                  src={question.user.avatarUrl}
-                  alt={question.user.name}
-                />
                 <AvatarFallback>{question.user.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <span>{question.user.name}</span>
+              <span>{firstName}</span>
               <span>&middot;</span>
-              <span>{timeAgo}</span>
+              <TimeAgo timestamp={question.timestamp} />
             </div>
           </div>
         </CardHeader>
@@ -58,10 +57,10 @@ export default async function QuestionPage({
             docId={question.id}
             initialVotes={question.votes}
           />
-          <div className="flex items-center gap-1.5">
+          {/* <div className="flex items-center gap-1.5">
             <MapPin className="h-4 w-4 text-accent" />
             <span className="font-medium text-accent">{question.distance}</span>
-          </div>
+          </div> */}
         </CardFooter>
       </Card>
 
@@ -89,9 +88,7 @@ export default async function QuestionPage({
                   <div className="flex items-center justify-between">
                     <p className="font-semibold">{answer.user.name}</p>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(answer.timestamp), {
-                        addSuffix: true,
-                      })}
+                      <TimeAgo timestamp={answer.timestamp} />
                     </span>
                   </div>
                   <p className="text-sm text-foreground/90">{answer.text}</p>
