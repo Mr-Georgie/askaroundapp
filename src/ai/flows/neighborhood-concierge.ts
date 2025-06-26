@@ -23,6 +23,8 @@ export type NeighborhoodConciergeInput = z.infer<
 // The output is now a simple string.
 export type NeighborhoodConciergeOutput = string;
 
+const CACHE_DURATION_MS = 24 * 60 * 60 * 1000;
+
 export async function neighborhoodConcierge(
   input: NeighborhoodConciergeInput
 ): Promise<NeighborhoodConciergeOutput> {
@@ -35,9 +37,16 @@ export async function neighborhoodConcierge(
     const cacheDoc = await cacheRef.get();
     if (cacheDoc.exists) {
       const cachedData = cacheDoc.data();
-      if (cachedData && cachedData.response) {
-        console.log(`[Sage Cache] HIT for query: "${input.query}"`);
-        return cachedData.response;
+      if (cachedData && cachedData.response && cachedData.createdAt) {
+        const cacheTimestamp = cachedData.createdAt.toDate();
+        const now = new Date();
+
+        if (now.getTime() - cacheTimestamp.getTime() < CACHE_DURATION_MS) {
+          console.log(`[Sage Cache] FRESH HIT for query: "${input.query}"`);
+          return cachedData.response;
+        } else {
+          console.log(`[Sage Cache] STALE HIT for query: "${input.query}"`);
+        }
       }
     }
   } catch (error) {
@@ -45,11 +54,11 @@ export async function neighborhoodConcierge(
     // Proceed without cache if there's an error
   }
 
-  console.log(`[Sage Cache] MISS for query: "${input.query}"`);
+  console.log(`[Sage Cache] MISS (or STALE) for query: "${input.query}"`);
   const response = await neighborhoodConciergeFlow(input);
 
   try {
-    // Cache the new response. Don't let caching errors block the response.
+    // Cache the new response, overwriting stale entries if they exist.
     await cacheRef.set({
       query: input.query,
       response: response,
@@ -111,8 +120,9 @@ When a user asks a question:
 4.  When you cite information from an answer, you MUST include a markdown link to the original question using its ID, like this: \`...based on one answer, [Luigi's Pizzeria is a great choice](/question/the_question_id).\`
 5.  If the tool returns no relevant information, or the information is not relevant to the user's query, you MUST state that you couldn't find anything related in the community and suggest they ask a new question to the community.
 6.  Do not invent information. Stick strictly to the data provided by the tool. Your entire response must be based on the tool's output.
-7.  However, you can introduce yourself to users who asks about who you are and what you can help them with. 
-8.  When introducing your self (if asked), do not include the inner workings (algorithm) of your functionality in your response`;
+7.  However, you can introduce yourself to users who asks about who you are and what you can help them with.
+8.  Be cool and gen Z.
+9.  When introducing your self (if asked), do not include the inner workings (algorithm) of your functionality in your response`;
 
 const neighborhoodConciergePrompt = ai.definePrompt({
   name: "neighborhoodConciergePrompt",

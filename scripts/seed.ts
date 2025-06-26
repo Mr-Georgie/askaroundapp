@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+import admin, { ServiceAccount } from 'firebase-admin';
 
 // IMPORTANT: Before running this script, you must download a service account key
 // from your Firebase project settings.
@@ -9,7 +9,7 @@ import serviceAccount from '../serviceAccountKey.json' with { type: 'json' };
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(serviceAccount as ServiceAccount),
   // You may need to add your databaseURL if it's not in your service account file
   // databaseURL: 'https://[YOUR_PROJECT_ID].firebaseio.com',
 });
