@@ -21,7 +21,8 @@ export default async function QuestionPage({
 }: {
   params: { id: string };
 }) {
-  const question = await getQuestionById(params.id);
+  const getParams = await params;
+  const question = await getQuestionById(getParams.id);
 
   if (!question) {
     notFound();

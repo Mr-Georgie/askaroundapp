@@ -1,45 +1,55 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ThemeToggle } from '../ThemeToggle';
-import { useAuth } from '@/context/AuthProvider';
-import { Button } from '../ui/button';
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "../ThemeToggle";
+import { useAuth } from "@/context/AuthProvider";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '../ui/dropdown-menu';
-import { LogIn, LogOut, Loader2, Shield } from 'lucide-react';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+} from "../ui/dropdown-menu";
+import { LogIn, LogOut, Shield } from "lucide-react";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_EMAIL = "chetamdavies@gmail.com";
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
+  const [isClient, setIsClient] = useState(false);
   const isAdmin = user?.email === ADMIN_EMAIL;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error('Error signing out', error);
+      console.error("Error signing out", error);
     }
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
       <div className="flex items-center justify-between h-16 px-4 max-w-5xl mx-auto">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-primary">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xl font-bold text-primary"
+        >
           <span className="text-2xl">A³</span>
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          {loading ? (
-            <Loader2 className="h-6 w-6 animate-spin" />
+          {!isClient ? (
+            <Skeleton className="h-10 w-10 rounded-full" />
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -60,7 +70,10 @@ export default function Header() {
                     <DropdownMenuSeparator />
                   </>
                 )}
-                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="cursor-pointer"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>

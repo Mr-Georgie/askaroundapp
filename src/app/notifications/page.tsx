@@ -1,34 +1,40 @@
 "use client";
 
-import TimeAgo from "@/components/TimeAgo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthProvider";
 import { getNotifications, markNotificationAsRead } from "@/lib/data";
 import type { AppNotification } from "@/lib/types";
-import { formatDistanceToNow } from "date-fns";
 import { Bell } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import TimeAgo from "@/components/TimeAgo";
 
 export default function NotificationsPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (user) {
+      setLoading(true);
       getNotifications(user.id).then((data) => {
         setNotifications(data);
         setLoading(false);
       });
     } else {
-      setLoading(false);
+      if (isClient) {
+        setLoading(false);
+      }
     }
-  }, [user]);
+  }, [user, isClient]);
 
   const handleNotificationClick = async (notification: AppNotification) => {
     if (!notification.read) {

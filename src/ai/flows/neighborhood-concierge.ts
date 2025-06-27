@@ -28,6 +28,15 @@ const CACHE_DURATION_MS = 24 * 60 * 60 * 1000;
 export async function neighborhoodConcierge(
   input: NeighborhoodConciergeInput
 ): Promise<NeighborhoodConciergeOutput> {
+  // Add a guard clause to ensure the admin SDK is initialized before use.
+  if (!dbAdmin) {
+    console.error(
+      "Firebase Admin SDK is not initialized. Cannot access cache or perform other admin tasks. Please check your server's environment variable configuration."
+    );
+    // Fallback to the flow without caching if db is not available.
+    return neighborhoodConciergeFlow(input);
+  }
+
   const cacheKey = createHash("md5")
     .update(input.query.toLowerCase().trim())
     .digest("hex");
