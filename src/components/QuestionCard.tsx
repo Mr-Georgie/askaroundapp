@@ -34,9 +34,13 @@ export default function QuestionCard({ question }: QuestionCardProps) {
               {question.text}
             </p>
             {question.isFlagged && (
-              <Badge variant="secondary" className="mt-2 text-xs font-normal">
+              <Badge
+                variant="secondary"
+                className="mt-2 text-[8px] font-normal"
+              >
                 <Info className="mr-1 h-3 w-3" />
-                This content is under review. Downvote if you find it inappropriate.
+                This content is under review. Downvote if you find it
+                inappropriate.
               </Badge>
             )}
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
