@@ -177,7 +177,10 @@ export default function Home() {
           <div className="text-center py-12 text-muted-foreground">
             <p className="font-semibold">No questions found</p>
             <p className="text-sm mt-1">
-              Try a different search term or ask a new question!
+              Try a different search term or{" "}
+              <a href="/ask" className="text-primary">
+                ask a new question!
+              </a>
             </p>
           </div>
         )}
