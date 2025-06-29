@@ -28,6 +28,7 @@ import type {
   AdminStats,
   AdminSearchResult,
 } from "./types";
+import { extractKeywords, STOP_WORDS } from "../../scripts/keywordExtractor";
 
 // Helper to convert any Firestore Timestamps to JS Date objects
 const convertTimestamps = <T>(data: T): T => {
@@ -49,57 +50,6 @@ const convertTimestamps = <T>(data: T): T => {
     }
   }
   return convertedData;
-};
-
-const STOP_WORDS = new Set([
-  "a",
-  "about",
-  "an",
-  "and",
-  "are",
-  "as",
-  "at",
-  "be",
-  "by",
-  "for",
-  "from",
-  "how",
-  "in",
-  "is",
-  "it",
-  "of",
-  "on",
-  "or",
-  "that",
-  "the",
-  "this",
-  "to",
-  "was",
-  "what",
-  "when",
-  "where",
-  "who",
-  "will",
-  "with",
-  "the",
-  "i",
-  "your",
-  "you",
-  "can",
-  "find",
-  "my",
-  "any",
-  "just",
-  "some",
-]);
-
-const extractKeywords = (text: string): string[] => {
-  const words = text
-    .toLowerCase()
-    .replace(/[^\w\s#]/g, "") // Allow '#' for existing tags
-    .split(/\s+/)
-    .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
-  return [...new Set(words)]; // Return unique keywords
 };
 
 export const getQuestions = async (): Promise<Question[]> => {
@@ -435,8 +385,8 @@ export const addSageMessage = async (
 export const getKeywords = async (count: number): Promise<Keyword[]> => {
   const keywordsQuery = query(
     collection(db, "keywords"),
-    orderBy("count", "desc"),
-    limit(count)
+    orderBy("count", "desc")
+    // limit(count)
   );
   const snapshot = await getDocs(keywordsQuery);
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Keyword));

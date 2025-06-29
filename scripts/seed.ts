@@ -1,5 +1,6 @@
 import admin, { ServiceAccount } from "firebase-admin";
 import { config } from "dotenv";
+import { extractKeywords, STOP_WORDS } from "./keywordExtractor";
 config();
 
 // IMPORTANT: Before running this script, you must have your service account
@@ -43,57 +44,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const STOP_WORDS = new Set([
-  "a",
-  "about",
-  "an",
-  "and",
-  "are",
-  "as",
-  "at",
-  "be",
-  "by",
-  "for",
-  "from",
-  "how",
-  "in",
-  "is",
-  "it",
-  "of",
-  "on",
-  "or",
-  "that",
-  "the",
-  "this",
-  "to",
-  "was",
-  "what",
-  "when",
-  "where",
-  "who",
-  "will",
-  "with",
-  "the",
-  "i",
-  "your",
-  "you",
-  "can",
-  "find",
-  "my",
-  "any",
-  "just",
-  "some",
-]);
-
-const extractKeywords = (text: string): string[] => {
-  const words = text
-    .toLowerCase()
-    .replace(/[^\w\s#]/g, "") // Allow '#' for existing tags
-    .split(/\s+/)
-    .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
-  return [...new Set(words)]; // Return unique keywords
-};
-
 const users = [
   {
     id: "seed_user_alice",
@@ -119,61 +69,91 @@ const users = [
 
 const questions = [
   {
-    text: "Where can I find the best Neapolitan pizza in the downtown area?",
+    text: "Where can I find the best Neapolitan pizza near Times Square?",
     categoryEmoji: "🍕",
     user: users[0],
     answers: [
       {
-        text: "Luigi's Pizzeria on 5th Ave has the most authentic Neapolitan pizza I've ever had!",
+        text: "Luigi's Pizzeria on 5th Ave (across from the NY Public Library) has the most authentic Neapolitan pizza I've ever had!",
         user: users[1],
       },
       {
-        text: "Seconding Luigi's! Their Margherita is to die for. The crust is perfect.",
+        text: "Seconding Luigi's! Their Margherita is to die for. Perfect crust and just two blocks from Rockefeller Center.",
         user: users[2],
       },
     ],
   },
   {
-    text: "Looking for a reliable and stylish barbershop. Any recommendations?",
+    text: "Looking for a reliable and stylish barbershop near Central Park. Any recommendations?",
     categoryEmoji: "✂️",
     user: users[2],
     answers: [
       {
-        text: "The Gilded Razor is top-notch. A bit pricey but worth every penny for the quality and experience.",
+        text: "The Gilded Razor near Columbus Circle is top-notch. Pricey but worth it for the quality and experience.",
         user: users[3],
       },
       {
-        text: "If you want something more classic and affordable, check out 'The Corner Clip'. Old-school vibe, great cuts.",
+        text: "For something more classic, try 'The Corner Clip' by the Flatiron Building. Old-school vibe with great cuts.",
         user: users[0],
       },
     ],
   },
   {
-    text: "Best running trail with a good mix of shade and sun?",
+    text: "Best running trail with a good mix of shade and sun near Golden Gate Park?",
     categoryEmoji: "🏃",
     user: users[3],
     answers: [
       {
-        text: "The Oakwood Park loop is my go-to. It has a beautiful canopy of trees for about half of the trail.",
+        text: "The Oakwood Park loop (near the de Young Museum) is my go-to. Beautiful tree canopy covers half the trail.",
         user: users[1],
       },
     ],
   },
   {
-    text: "Any quiet coffee shops with strong Wi-Fi for remote work?",
+    text: "Any quiet coffee shops with strong Wi-Fi near the Space Needle for remote work?",
     categoryEmoji: "☕",
     user: users[1],
     answers: [
       {
-        text: "The Daily Grind is perfect for that. Lots of outlets and the Wi-Fi is super fast. Can get a little busy during lunch rush though.",
+        text: "The Daily Grind at Pike Place Market is perfect. Fast Wi-Fi, plenty of outlets (but busy during lunch).",
         user: users[0],
       },
       {
-        text: "Bean Scene is another great option, especially in the afternoons. It has a dedicated quiet zone upstairs.",
+        text: "Bean Scene near the Seattle Art Museum has a dedicated quiet zone upstairs. Great afternoon spot.",
         user: users[3],
       },
     ],
   },
+  {
+    text: "Where can I find the best suya near the National Theatre in Iganmu?",
+    categoryEmoji: "🍢",
+    user: users[1],
+    answers: [
+      {
+        text: "Mama Hadija's Suya Spot right beside the National Theatre main gate! Her spicy beef suya with fresh onions is legendary.",
+        user: users[2],
+      },
+      {
+        text: "For gourmet suya, try 'Yahuza Suya Express' at the Eko Hotel roundabout. Their chicken suya with special yaji is worth the queue.",
+        user: users[0],
+      }
+    ],
+  },
+  {
+    text: "Best place for boat rides with views of Third Mainland Bridge?",
+    categoryEmoji: "⛵",
+    user: users[3],
+    answers: [
+      {
+        text: "Lagoon Restaurant at Victoria Island has sunset cruises that go under the bridge. You get amazing skyline views of Ikoyi and Lagos Island.",
+        user: users[1],
+      },
+      {
+        text: "Check out the Makoko Floating Tours - they start near the bridge's Adekunle exit point. Local guides show you the stilt communities and bridge architecture.",
+        user: users[2],
+      }
+    ],
+  }
 ];
 
 const seedDatabase = async () => {

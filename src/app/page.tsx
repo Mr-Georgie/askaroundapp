@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { STOP_WORDS } from "../../scripts/keywordExtractor";
 
 const KeywordTags = ({
   keywords,
@@ -39,48 +40,6 @@ export default function Home() {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const STOP_WORDS = new Set([
-    "a",
-    "about",
-    "an",
-    "and",
-    "are",
-    "as",
-    "at",
-    "be",
-    "by",
-    "for",
-    "from",
-    "how",
-    "in",
-    "is",
-    "it",
-    "of",
-    "on",
-    "or",
-    "that",
-    "the",
-    "this",
-    "to",
-    "was",
-    "what",
-    "when",
-    "where",
-    "who",
-    "will",
-    "with",
-    "the",
-    "i",
-    "your",
-    "you",
-    "can",
-    "find",
-    "my",
-    "any",
-    "just",
-    "some",
-  ]);
 
   useEffect(() => {
     const fetchData = async () => {
