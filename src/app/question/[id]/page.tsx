@@ -108,13 +108,7 @@ export default async function QuestionPage({
                     )}
                   {answer.photoUrl && (
                     <div className="relative mt-2 aspect-video overflow-hidden rounded-lg border">
-                      <Image
-                        src={answer.photoUrl}
-                        alt="User submitted photo"
-                        layout="fill"
-                        objectFit="cover"
-                        data-ai-hint="neighborhood scene"
-                      />
+                      <Image src={answer.photoUrl} alt="User submitted photo" fill className="object-cover" data-ai-hint="neighborhood scene" />
                     </div>
                   )}
                   <div className="pt-2">

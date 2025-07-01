@@ -68,6 +68,7 @@ const users = [
 ];
 
 const questions = [
+  // US Question (kept as reference)
   {
     text: "Where can I find the best Neapolitan pizza near Times Square?",
     categoryEmoji: "🍕",
@@ -83,47 +84,7 @@ const questions = [
       },
     ],
   },
-  {
-    text: "Looking for a reliable and stylish barbershop near Central Park. Any recommendations?",
-    categoryEmoji: "✂️",
-    user: users[2],
-    answers: [
-      {
-        text: "The Gilded Razor near Columbus Circle is top-notch. Pricey but worth it for the quality and experience.",
-        user: users[3],
-      },
-      {
-        text: "For something more classic, try 'The Corner Clip' by the Flatiron Building. Old-school vibe with great cuts.",
-        user: users[0],
-      },
-    ],
-  },
-  {
-    text: "Best running trail with a good mix of shade and sun near Golden Gate Park?",
-    categoryEmoji: "🏃",
-    user: users[3],
-    answers: [
-      {
-        text: "The Oakwood Park loop (near the de Young Museum) is my go-to. Beautiful tree canopy covers half the trail.",
-        user: users[1],
-      },
-    ],
-  },
-  {
-    text: "Any quiet coffee shops with strong Wi-Fi near the Space Needle for remote work?",
-    categoryEmoji: "☕",
-    user: users[1],
-    answers: [
-      {
-        text: "The Daily Grind at Pike Place Market is perfect. Fast Wi-Fi, plenty of outlets (but busy during lunch).",
-        user: users[0],
-      },
-      {
-        text: "Bean Scene near the Seattle Art Museum has a dedicated quiet zone upstairs. Great afternoon spot.",
-        user: users[3],
-      },
-    ],
-  },
+  // Nigerian Questions
   {
     text: "Where can I find the best suya near the National Theatre in Iganmu?",
     categoryEmoji: "🍢",
@@ -151,6 +112,66 @@ const questions = [
       {
         text: "Check out the Makoko Floating Tours - they start near the bridge's Adekunle exit point. Local guides show you the stilt communities and bridge architecture.",
         user: users[2],
+      }
+    ],
+  },
+  {
+    text: "Where to get authentic Aba-made shoes near the Nike Art Gallery in Lekki?",
+    categoryEmoji: "👞",
+    user: users[0],
+    answers: [
+      {
+        text: "Aba Shoemakers Collective at Lekki Phase 1 Market, just 10 mins from Nike Gallery. They customize on the spot with quality leather!",
+        user: users[3],
+      },
+      {
+        text: "Check out 'Agu Di Nma' boutique opposite Covenant Church on Admiralty Way. Family-run since 1995 with proper Aba craftsmanship.",
+        user: users[1],
+      }
+    ],
+  },
+  {
+    text: "Best spot for amala and ewedu near University of Lagos main gate?",
+    categoryEmoji: "🍛",
+    user: users[2],
+    answers: [
+      {
+        text: "Mama Put's Kitchen on Akoka Road! Their amala is smooth with authentic ila soup. 5-min walk from UNILAG gate.",
+        user: users[0],
+      },
+      {
+        text: "'Ogun State Special' at Sabo Yaba market. Go before 2pm for fresh ewedu with assorted meats. Near the pedestrian bridge.",
+        user: users[3],
+      }
+    ],
+  },
+  {
+    text: "Where can I buy original Adire fabric near the Olumo Rock in Abeokuta?",
+    categoryEmoji: "👘",
+    user: users[3],
+    answers: [
+      {
+        text: "Kuti's Heritage Center at the base of Olumo Rock. They demonstrate traditional dyeing techniques before you buy!",
+        user: users[1],
+      },
+      {
+        text: "Alake Market stalls behind Centenary Hall. Look for Mama Risikat - her indigo patterns are museum-quality.",
+        user: users[2],
+      }
+    ],
+  },
+  {
+    text: "Best viewing spot for Lekki-Ikoyi Bridge lights at night?",
+    categoryEmoji: "🌉",
+    user: users[0],
+    answers: [
+      {
+        text: "The Lekki-Ikoyi Link Bridge viewpoint park on Ikoyi side. Opens till 10pm with perfect camera angles!",
+        user: users[3],
+      },
+      {
+        text: "Skybar Rooftop at Oriental Hotel (VI side). Sip cocktails while watching the light show over the lagoon.",
+        user: users[1],
       }
     ],
   }

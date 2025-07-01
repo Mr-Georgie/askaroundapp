@@ -6,7 +6,8 @@ import BottomNav from "@/components/layout/BottomNav";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/context/AuthProvider";
 import SageFAB from "@/components/SageFAB";
-import Analytics from "@/components/Analytics";
+import { Analytics } from "@vercel/analytics/next"
+// import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: "AskAroundApp",
@@ -41,7 +42,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />}
+            <Analytics />
+            {/* {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />} */}
             <div className="relative flex min-h-screen flex-col">
               <Header />
               <main className="flex-1 px-4 py-6 pt-20 pb-24">{children}</main>
