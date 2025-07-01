@@ -129,7 +129,7 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
 
     setIsSubmitting(true);
     try {
-        await addAnswer(questionId, { text: answerText, user, photoUrl: photoDataUrl || "" });
+        await addAnswer(questionId, { text: answerText, user, photoDataUrl: photoDataUrl || "" });
         
         setAnswerText('');
         handleRemoveImage();
