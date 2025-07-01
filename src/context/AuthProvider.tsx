@@ -17,12 +17,14 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   user: (User & { email?: string | null }) | null;
+  loading: boolean,
   firebaseUser: FirebaseUser | null;
   hasUnreadNotifications: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  loading: true,
   firebaseUser: null,
   hasUnreadNotifications: false,
 });
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<(User & { email?: string | null }) | null>(
     null
   );
+  const [loading, setLoading] = useState(true);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
 
   useEffect(() => {
@@ -68,6 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         appUser.email = fbUser.email ?? "";
         setUser(appUser);
+        
 
         // Set up new notification listener
         const unreadNotifsQuery = query(
@@ -82,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
         setHasUnreadNotifications(false);
       }
+      setLoading(false);
     });
 
     return () => {
@@ -92,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, firebaseUser, hasUnreadNotifications }}
+      value={{ user, loading, firebaseUser, hasUnreadNotifications }}
     >
       {children}
     </AuthContext.Provider>

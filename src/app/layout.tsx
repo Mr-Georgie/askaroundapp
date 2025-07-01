@@ -42,13 +42,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Analytics />
+            
             {/* {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && <Analytics />} */}
             <div className="relative flex min-h-screen flex-col">
               <Header />
               <main className="flex-1 px-4 py-6 pt-20 pb-24">{children}</main>
               <SageFAB />
               <BottomNav />
+              <Analytics />
             </div>
             <Toaster />
           </ThemeProvider>

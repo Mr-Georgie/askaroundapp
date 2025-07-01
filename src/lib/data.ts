@@ -393,18 +393,21 @@ export const getKeywords = async (count: number): Promise<Keyword[]> => {
 };
 
 export const getAdminStats = async (): Promise<AdminStats> => {
-  const usersSnap = await getCountFromServer(collection(db, "users"));
-  const questionsSnap = await getCountFromServer(collection(db, "questions"));
+    const usersSnap = await getDocs(collection(db, 'users'));
+    const nonSeededUsers = usersSnap.docs.filter(doc => !doc.id.startsWith('seed_'));
 
-  const sageConvos = await getDocs(collectionGroup(db, "sageConversations"));
-  const sageUserIds = new Set(sageConvos.docs.map((doc) => doc.data().userId));
+    const questionsSnap = await getCountFromServer(collection(db, 'questions'));
+    
+    const sageConvos = await getDocs(collectionGroup(db, 'sageConversations'));
+    const sageUserIds = new Set(sageConvos.docs.map(doc => doc.data().userId));
+    const nonSeededSageUsers = [...sageUserIds].filter(id => !id.startsWith('seed_'));
 
-  return {
-    userCount: usersSnap.data().count,
-    questionCount: questionsSnap.data().count,
-    sageUserCount: sageUserIds.size,
-  };
-};
+    return {
+        userCount: nonSeededUsers.length,
+        questionCount: questionsSnap.data().count,
+        sageUserCount: nonSeededSageUsers.length,
+    };
+}
 
 export const searchContentForAdmin = async (
   searchText: string
