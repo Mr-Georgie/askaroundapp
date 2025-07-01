@@ -17,7 +17,7 @@ export interface Answer {
   user: User;
   votes: number;
   timestamp: Date;
-  photoUrl?: string;
+  photoDataUrl?: string;
   status: "active" | "deleted";
   isFlagged: boolean;
 }

@@ -106,9 +106,9 @@ export default async function QuestionPage({
                          This content is under review.
                        </Badge>
                     )}
-                  {answer.photoUrl && (
+                  {answer.photoDataUrl && (
                     <div className="relative mt-2 aspect-video overflow-hidden rounded-lg border">
-                      <Image src={answer.photoUrl} alt="User submitted photo" fill className="object-cover" data-ai-hint="neighborhood scene" />
+                      <Image src={answer.photoDataUrl} alt="User submitted photo" fill className="object-cover" data-ai-hint="neighborhood scene" />
                     </div>
                   )}
                   <div className="pt-2">
