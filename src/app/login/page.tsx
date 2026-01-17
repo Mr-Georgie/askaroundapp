@@ -46,32 +46,46 @@ export default function LoginPage() {
     <div className="max-w-sm mx-auto flex items-center min-h-[60vh]">
       <Card className="w-full">
         <CardHeader className="text-center">
-          <CardTitle>Welcome to AskAroundApp</CardTitle>
+          <CardTitle>Welcome to AskAround</CardTitle>
           <CardDescription>
             Please agree to the terms to continue.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-start space-x-3">
             <Checkbox
               id="terms"
               checked={agreed}
               onCheckedChange={(checked) => setAgreed(checked as boolean)}
+              className="mt-0.5"
             />
-            <Label
-              htmlFor="terms"
-              className="text-sm font-normal text-muted-foreground"
-            >
-              I have read and agree to the{" "}
-              <Link
-                href="/terms"
-                target="_blank"
-                className="underline hover:text-primary"
+            <div className="grid gap-1.5 leading-none">
+              <Label
+                htmlFor="terms"
+                className="text-sm font-normal text-muted-foreground"
               >
-                Terms and Conditions
-              </Link>
-              .
-            </Label>
+                I have read and agree to the{" "}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  className="underline hover:text-primary"
+                >
+                  Terms and Conditions
+                </Link>
+                .
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Learn more about our community on the{" "}
+                <Link
+                  href="/about"
+                  target="_blank"
+                  className="underline hover:text-primary"
+                >
+                  About page
+                </Link>
+                .
+              </p>
+            </div>
           </div>
         </CardContent>
         <CardFooter>

@@ -10,13 +10,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
-import { LogIn, LogOut, Loader2 } from "lucide-react";
+import { LogIn, LogOut, Shield } from "lucide-react";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
+
+const ADMIN_EMAIL = "chetamdavies@gmail.com";
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+  const isAdmin = user?.email === ADMIN_EMAIL;
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -29,13 +40,16 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
       <div className="flex items-center justify-between h-16 px-4 max-w-5xl mx-auto">
-        <Link href="/" className="text-xl font-bold text-primary">
-          AskAroundApp
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xl font-bold text-primary"
+        >
+          <span className="text-2xl">A³</span>
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          {loading ? (
-            <Loader2 className="h-6 w-6 animate-spin" />
+          {!isClient ? (
+            <Skeleton className="h-10 w-10 rounded-full" />
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -45,6 +59,17 @@ export default function Header() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">
+                        <Shield className="mr-2 h-4 w-4" />
+                        <span>Admin Panel</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem
                   onClick={handleSignOut}
                   className="cursor-pointer"

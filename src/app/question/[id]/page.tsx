@@ -7,20 +7,22 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import { Info, MapPin } from "lucide-react";
 import VoteButtons from "@/components/VoteButtons";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import AnswerForm from "./AnswerForm";
 import TimeAgo from "@/components/TimeAgo";
+import { Badge } from "@/components/ui/badge";
 
 export default async function QuestionPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const question = await getQuestionById(params.id);
+  const getParams = await params;
+  const question = await getQuestionById(getParams.id);
 
   if (!question) {
     notFound();
@@ -41,6 +43,12 @@ export default async function QuestionPage({
             <h1 className="text-xl font-bold text-card-foreground">
               {question.text}
             </h1>
+            {question.isFlagged && (
+              <Badge variant="destructive" className="mt-2 text-xs font-normal">
+                <Info className="mr-1 h-3 w-3" />
+                This content is under review. Downvote if you find it inappropriate.
+              </Badge>
+            )}
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
               <Avatar className="h-6 w-6">
                 <AvatarFallback>{question.user.name.charAt(0)}</AvatarFallback>
@@ -92,15 +100,15 @@ export default async function QuestionPage({
                     </span>
                   </div>
                   <p className="text-sm text-foreground/90">{answer.text}</p>
-                  {answer.photoUrl && (
+                  {answer.isFlagged && (
+                       <Badge variant="destructive" className="mt-2 text-xs font-normal">
+                         <Info className="mr-1 h-3 w-3" />
+                         This content is under review.
+                       </Badge>
+                    )}
+                  {answer.photoDataUrl && (
                     <div className="relative mt-2 aspect-video overflow-hidden rounded-lg border">
-                      <Image
-                        src={answer.photoUrl}
-                        alt="User submitted photo"
-                        layout="fill"
-                        objectFit="cover"
-                        data-ai-hint="neighborhood scene"
-                      />
+                      <Image src={answer.photoDataUrl} alt="User submitted photo" fill className="object-cover" data-ai-hint="neighborhood scene" />
                     </div>
                   )}
                   <div className="pt-2">

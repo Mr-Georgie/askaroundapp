@@ -1,7 +1,13 @@
 export interface User {
   id: string;
   name: string;
+  email: string;
   avatarUrl: string;
+}
+
+export interface Keyword {
+  id: string;
+  count: number;
 }
 
 export interface Answer {
@@ -11,7 +17,9 @@ export interface Answer {
   user: User;
   votes: number;
   timestamp: Date;
-  photoUrl?: string;
+  photoDataUrl?: string;
+  status: "active" | "deleted";
+  isFlagged: boolean;
 }
 
 export interface Question {
@@ -24,6 +32,9 @@ export interface Question {
   categoryEmoji: string;
   timestamp: Date;
   answers: Answer[];
+  keywords: string[];
+  status: "active" | "deleted";
+  isFlagged: boolean;
 }
 
 export interface SageConversation {
@@ -51,3 +62,11 @@ export interface AppNotification {
   actor: User;
   timestamp: Date;
 }
+
+export interface AdminStats {
+    userCount: number;
+    questionCount: number;
+    sageUserCount: number;
+}
+
+export type AdminSearchResult = (Question & { type: 'question' }) | (Answer & { type: 'answer' });
